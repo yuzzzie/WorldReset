@@ -3993,50 +3993,31 @@ public class Main extends JavaPlugin implements Listener {
 
     // Dodatkowy w pełni precyzyjny event speedrunnerski
     @EventHandler
-    public void onPortalEnter(EntityPortalEnterEvent e) {
+    public void onPlayerTeleport(PlayerTeleportEvent e) {
         if (isResetting || !timerEnabled || !timerRunning) return;
-        if (!(e.getEntity() instanceof Player p)) return;
+        if (e.getFrom().getWorld() == null || e.getTo().getWorld() == null) return;
 
-        String n = e.getLocation().getWorld().getName();
-        if (!n.contains(gameWorldName)) return;
+        String from = e.getFrom().getWorld().getName();
+        String to = e.getTo().getWorld().getName();
+        String cause = e.getCause().name();
 
-        Material m = e.getLocation().getBlock().getType();
-        String portalType = null;
-
-        if (m == Material.NETHER_PORTAL) {
-            portalType = "NETHER";
-        } else if (m == Material.END_PORTAL) {
-            if (n.endsWith("_the_end")) {
-                portalType = "OVERWORLD";
-            } else {
-                portalType = "END";
+        if (!from.equalsIgnoreCase(to)) {
+            String portalType = "ANY";
+            if (cause.equalsIgnoreCase("NETHER_PORTAL")) portalType = "NETHER";
+            else if (cause.equalsIgnoreCase("END_PORTAL")) portalType = "END";
+            else if (cause.equalsIgnoreCase("UNKNOWN")) {
+                if (from.endsWith("the_end")) portalType = "OVERWORLD";
             }
+            checkTimerGoal(e.getPlayer(), "PORTAL", portalType);
         }
 
-        if (portalType != null) {
-            checkTimerGoal(p, "PORTAL", portalType);
-        }
+
     }
 
     @EventHandler
     public void onPortal(PlayerPortalEvent e) {
         if(isResetting) return;
         String n = e.getFrom().getWorld().getName();
-
-        // Fallback w razie opoznienia EntityPortalEnterEvent
-        if (timerEnabled && timerRunning) {
-            String portalType = "ANY";
-            if (e.getCause() == PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) {
-                portalType = "NETHER";
-            } else if (e.getCause() == PlayerTeleportEvent.TeleportCause.END_PORTAL) {
-                if (n.endsWith("_the_end")) {
-                    portalType = "OVERWORLD";
-                } else {
-                    portalType = "END";
-                }
-            }
-            checkTimerGoal(e.getPlayer(), "PORTAL", portalType);
-        }
 
         if(!n.contains(gameWorldName)) return;
 
