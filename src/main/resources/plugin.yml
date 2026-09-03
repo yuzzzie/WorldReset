@@ -11,7 +11,6 @@ commands:
     description: Main command
     aliases: [wr]
     usage: /wr <reset|limbo|seed|language|silent|death|filter|timer|templates|autoreset|backup|scoreboard|reload>
-    permission: worldreset.admin
 
 permissions:
   # ==========================================
