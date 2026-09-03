@@ -3911,6 +3911,16 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        UUID uuid = e.getPlayer().getUniqueId();
+        BukkitTask task = activeCountdowns.remove(uuid);
+        if (task != null) task.cancel(); // Cancel active countdowns
+        // limboSavedStates is preserved here so player data is not lost!
+
+        Bukkit.getScheduler().runTaskLater(this, this::syncAllScoreboards, 1L);
+    }
+
+    @EventHandler
     public void onPlayerDeath(PlayerDeathEvent e) {
         if (e.getEntity().getWorld().getName().equals(limboWorldName)) return;
         if (!e.getEntity().getWorld().getName().contains(gameWorldName)) return;
