@@ -5554,166 +5554,947 @@ public class Main extends JavaPlugin implements Listener {
     // --- DYNAMIC TAB COMPLETION ---
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
+        // ARGUMENT 1
         if (args.length == 1) {
-            return StringUtil.copyPartialMatches(args[0], Arrays.asList("reset", "limbo", "seed", "language", "silent", "death", "filter", "timer", "compass", "scoreboard", "templates", "autoreset", "backup", "give", "reload", "help"), new ArrayList<>());
+            List<String> suggestions = new ArrayList<>();
+
+            if (sender.hasPermission("worldreset.reset"))
+                suggestions.add("reset");
+
+            if (sender.hasPermission("worldreset.limbo.self") || sender.hasPermission("worldreset.limbo.others") || sender.hasPermission("worldreset.limbo.all"))
+                suggestions.add("limbo");
+
+            if (sender.hasPermission("worldreset.seed.use") || sender.hasPermission("worldreset.seed.config"))
+                suggestions.add("seed");
+
+            if (sender.hasPermission("worldreset.language"))
+                suggestions.add("language");
+
+            if (sender.hasPermission("worldreset.silent"))
+                suggestions.add("silent");
+
+            if (sender.hasPermission("worldreset.death"))
+                suggestions.add("death");
+
+            if (sender.hasPermission("worldreset.filter.use") || sender.hasPermission("worldreset.filter.config"))
+                suggestions.add("filter");
+
+            if (sender.hasPermission("worldreset.timer.use") || sender.hasPermission("worldreset.timer.config"))
+                suggestions.add("timer");
+
+            if (sender.hasPermission("worldreset.compass"))
+                suggestions.add("compass");
+
+            if (sender.hasPermission("worldreset.scoreboard.use") || sender.hasPermission("worldreset.scoreboard.admin"))
+                suggestions.add("scoreboard");
+
+            if (sender.hasPermission("worldreset.templates"))
+                suggestions.add("templates");
+
+            if (sender.hasPermission("worldreset.autoreset.use") || sender.hasPermission("worldreset.autoreset.config"))
+                suggestions.add("autoreset");
+
+            if (sender.hasPermission("worldreset.backup.list") || sender.hasPermission("worldreset.backup.create") || sender.hasPermission("worldreset.backup.admin"))
+                suggestions.add("backup");
+
+            if (sender.hasPermission("worldreset.give"))
+                suggestions.add("give");
+
+            if (sender.hasPermission("worldreset.config.reload"))
+                suggestions.add("reload");
+
+            // Help is always available if sender has any permission
+            boolean hasAnyPermission =
+                    sender.hasPermission("worldreset.reset")
+                            || sender.hasPermission("worldreset.limbo.self")
+                            || sender.hasPermission("worldreset.limbo.others")
+                            || sender.hasPermission("worldreset.limbo.all")
+                            || sender.hasPermission("worldreset.seed.use")
+                            || sender.hasPermission("worldreset.seed.config")
+                            || sender.hasPermission("worldreset.language")
+                            || sender.hasPermission("worldreset.silent")
+                            || sender.hasPermission("worldreset.death")
+                            || sender.hasPermission("worldreset.filter.use")
+                            || sender.hasPermission("worldreset.filter.config")
+                            || sender.hasPermission("worldreset.timer.use")
+                            || sender.hasPermission("worldreset.timer.config")
+                            || sender.hasPermission("worldreset.compass")
+                            || sender.hasPermission("worldreset.scoreboard.use")
+                            || sender.hasPermission("worldreset.scoreboard.admin")
+                            || sender.hasPermission("worldreset.templates")
+                            || sender.hasPermission("worldreset.autoreset.use")
+                            || sender.hasPermission("worldreset.autoreset.config")
+                            || sender.hasPermission("worldreset.backup.list")
+                            || sender.hasPermission("worldreset.backup.create")
+                            || sender.hasPermission("worldreset.backup.admin")
+                            || sender.hasPermission("worldreset.give")
+                            || sender.hasPermission("worldreset.config.reload");
+
+            if (hasAnyPermission) {
+                suggestions.add("help");
+            }
+
+            return StringUtil.copyPartialMatches(
+                    args[0],
+                    suggestions,
+                    new ArrayList<>()
+            );
         }
+
+
+        // ARGUMENT 2
         if (args.length == 2) {
+
+            // -------------------------
+            // DEATH
+            // -------------------------
             if (args[0].equalsIgnoreCase("death")) {
-                return StringUtil.copyPartialMatches(args[1], Arrays.asList("enable", "disable", "1", "3", "5"), new ArrayList<>());
+                if (!sender.hasPermission("worldreset.death"))
+                    return Collections.emptyList();
+
+                return StringUtil.copyPartialMatches(
+                        args[1],
+                        Arrays.asList("enable", "disable", "1", "3", "5"),
+                        new ArrayList<>()
+                );
             }
+
+
+            // FILTER
             if (args[0].equalsIgnoreCase("filter")) {
-                return StringUtil.copyPartialMatches(args[1], Arrays.asList("structure", "biome", "attempts", "enable", "disable", "status", "clear"), new ArrayList<>());
+                List<String> suggestions = new ArrayList<>();
+
+                if (sender.hasPermission("worldreset.filter.use")) {
+                    suggestions.addAll(Arrays.asList(
+                            "enable",
+                            "disable",
+                            "status"
+                    ));
+                }
+
+                if (sender.hasPermission("worldreset.filter.config")) {
+                    suggestions.addAll(Arrays.asList(
+                            "structure",
+                            "biome",
+                            "attempts",
+                            "clear"
+                    ));
+                }
+
+                return StringUtil.copyPartialMatches(
+                        args[1],
+                        suggestions,
+                        new ArrayList<>()
+                );
             }
-            if (args[0].equalsIgnoreCase("language")) return StringUtil.copyPartialMatches(args[1], Arrays.asList("en", "pl"), new ArrayList<>());
-            if (args[0].equalsIgnoreCase("timer")) return StringUtil.copyPartialMatches(args[1], Arrays.asList("start", "pause", "reset", "enable", "disable", "mode", "scope", "goal"), new ArrayList<>());
-            if (args[0].equalsIgnoreCase("compass")) return StringUtil.copyPartialMatches(args[1], Arrays.asList("enable", "disable"), new ArrayList<>());
-            if (args[0].equalsIgnoreCase("scoreboard")) return StringUtil.copyPartialMatches(args[1], Arrays.asList("enable", "disable", "status", "reset"), new ArrayList<>());
-            if (args[0].equalsIgnoreCase("templates")) return StringUtil.copyPartialMatches(args[1], Arrays.asList("enable", "disable", "folder", "status"), new ArrayList<>());
-            if (args[0].equalsIgnoreCase("autoreset")) return StringUtil.copyPartialMatches(args[1], Arrays.asList("start", "stop", "disable", "status", "loop", "visible", "time"), new ArrayList<>());
-            if (args[0].equalsIgnoreCase("backup")) return StringUtil.copyPartialMatches(args[1], Arrays.asList("enable", "disable", "status", "list", "load", "clear", "limit"), new ArrayList<>());
+
+
+            // LANGUAGE
+            if (args[0].equalsIgnoreCase("language")) {
+                if (!sender.hasPermission("worldreset.language"))
+                    return Collections.emptyList();
+
+                return StringUtil.copyPartialMatches(
+                        args[1],
+                        Arrays.asList("en", "pl"),
+                        new ArrayList<>()
+                );
+            }
+
+
+            // TIMER
+            if (args[0].equalsIgnoreCase("timer")) {
+                List<String> suggestions = new ArrayList<>();
+
+                if (sender.hasPermission("worldreset.timer.use")) {
+                    suggestions.addAll(Arrays.asList(
+                            "start",
+                            "pause",
+                            "reset",
+                            "enable",
+                            "disable"
+                    ));
+                }
+
+                if (sender.hasPermission("worldreset.timer.config")) {
+                    suggestions.addAll(Arrays.asList(
+                            "mode",
+                            "scope",
+                            "goal"
+                    ));
+                }
+
+                return StringUtil.copyPartialMatches(
+                        args[1],
+                        suggestions,
+                        new ArrayList<>()
+                );
+            }
+
+
+            // COMPASS
+            if (args[0].equalsIgnoreCase("compass")) {
+                if (!sender.hasPermission("worldreset.compass"))
+                    return Collections.emptyList();
+
+                return StringUtil.copyPartialMatches(
+                        args[1],
+                        Arrays.asList("enable", "disable"),
+                        new ArrayList<>()
+                );
+            }
+
+
+            // SCOREBOARD
+            if (args[0].equalsIgnoreCase("scoreboard")) {
+                List<String> suggestions = new ArrayList<>();
+
+                if (sender.hasPermission("worldreset.scoreboard.use")) {
+                    suggestions.addAll(Arrays.asList(
+                            "enable",
+                            "disable",
+                            "status"
+                    ));
+                }
+
+                if (sender.hasPermission("worldreset.scoreboard.admin")) {
+                    suggestions.add("reset");
+                }
+
+                return StringUtil.copyPartialMatches(
+                        args[1],
+                        suggestions,
+                        new ArrayList<>()
+                );
+            }
+
+
+            // TEMPLATES
+            if (args[0].equalsIgnoreCase("templates")) {
+                if (!sender.hasPermission("worldreset.templates"))
+                    return Collections.emptyList();
+
+                return StringUtil.copyPartialMatches(
+                        args[1],
+                        Arrays.asList(
+                                "enable",
+                                "disable",
+                                "folder",
+                                "status"
+                        ),
+                        new ArrayList<>()
+                );
+            }
+
+
+            // AUTORESET
+            if (args[0].equalsIgnoreCase("autoreset")) {
+                List<String> suggestions = new ArrayList<>();
+
+                if (sender.hasPermission("worldreset.autoreset.use")) {
+                    suggestions.addAll(Arrays.asList(
+                            "start",
+                            "stop",
+                            "disable",
+                            "status"
+                    ));
+                }
+
+                if (sender.hasPermission("worldreset.autoreset.config")) {
+                    suggestions.addAll(Arrays.asList(
+                            "loop",
+                            "visible",
+                            "time"
+                    ));
+                }
+
+                return StringUtil.copyPartialMatches(
+                        args[1],
+                        suggestions,
+                        new ArrayList<>()
+                );
+            }
+
+
+            // BACKUP
+            if (args[0].equalsIgnoreCase("backup")) {
+                List<String> suggestions = new ArrayList<>();
+
+                if (sender.hasPermission("worldreset.backup.list")) {
+                    suggestions.add("list");
+                }
+
+                if (sender.hasPermission("worldreset.backup.create")) {
+                    suggestions.addAll(Arrays.asList(
+                            "enable",
+                            "disable",
+                            "status"
+                    ));
+                }
+
+                if (sender.hasPermission("worldreset.backup.admin")) {
+                    suggestions.addAll(Arrays.asList(
+                            "load",
+                            "clear",
+                            "limit"
+                    ));
+                }
+
+                return StringUtil.copyPartialMatches(
+                        args[1],
+                        suggestions,
+                        new ArrayList<>()
+                );
+            }
+
+
+            // LIMBO
             if (args[0].equalsIgnoreCase("limbo")) {
-                List<String> suggestions = new ArrayList<>(Arrays.asList("me", "all", "delay", "3", "5", "10"));
-                for (Player p : Bukkit.getOnlinePlayers()) suggestions.add(p.getName());
-                return StringUtil.copyPartialMatches(args[1], suggestions, new ArrayList<>());
+                List<String> suggestions = new ArrayList<>();
+
+                if (sender.hasPermission("worldreset.limbo.self")) {
+                    suggestions.add("me");
+                }
+
+                if (sender.hasPermission("worldreset.limbo.all")) {
+                    suggestions.add("all");
+                    suggestions.add("delay");
+                    suggestions.add("3");
+                    suggestions.add("5");
+                    suggestions.add("10");
+                }
+
+                if (sender.hasPermission("worldreset.limbo.others")) {
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        suggestions.add(p.getName());
+                    }
+                }
+
+                return StringUtil.copyPartialMatches(
+                        args[1],
+                        suggestions,
+                        new ArrayList<>()
+                );
             }
-            if (args[0].equalsIgnoreCase("reset")) return StringUtil.copyPartialMatches(args[1], Arrays.asList("3", "5", "10", "15", "30"), new ArrayList<>());
-            if (args[0].equalsIgnoreCase("seed")) return StringUtil.copyPartialMatches(args[1], Arrays.asList("enable", "disable", "clear", "copy", "status"), new ArrayList<>());
-            if (args[0].equalsIgnoreCase("give")) return StringUtil.copyPartialMatches(args[1], Arrays.asList("boat", "wood"), new ArrayList<>());
-            if (args[0].equalsIgnoreCase("help") || args[0].equals("?")) return StringUtil.copyPartialMatches(args[1], Arrays.asList("reset", "limbo", "death", "timer", "autoreset", "filter", "seed", "give", "templates", "compass", "scoreboard", "backup", "language", "silent", "reload"), new ArrayList<>());
-        }
-        if (args.length == 3) {
+
+
+            // RESET
+            if (args[0].equalsIgnoreCase("reset")) {
+                if (!sender.hasPermission("worldreset.reset"))
+                    return Collections.emptyList();
+
+                return StringUtil.copyPartialMatches(
+                        args[1],
+                        Arrays.asList("3", "5", "10", "15", "30"),
+                        new ArrayList<>()
+                );
+            }
+
+
+            // SEED
+            if (args[0].equalsIgnoreCase("seed")) {
+                List<String> suggestions = new ArrayList<>();
+
+                if (sender.hasPermission("worldreset.seed.use")) {
+                    suggestions.addAll(Arrays.asList(
+                            "enable",
+                            "disable",
+                            "copy",
+                            "status"
+                    ));
+                }
+
+                if (sender.hasPermission("worldreset.seed.config")) {
+                    suggestions.add("clear");
+                }
+
+                return StringUtil.copyPartialMatches(
+                        args[1],
+                        suggestions,
+                        new ArrayList<>()
+                );
+            }
+
+
+            // GIVE
             if (args[0].equalsIgnoreCase("give")) {
+                if (!sender.hasPermission("worldreset.give"))
+                    return Collections.emptyList();
+
+                return StringUtil.copyPartialMatches(
+                        args[1],
+                        Arrays.asList("boat", "wood"),
+                        new ArrayList<>()
+                );
+            }
+
+
+            // HELP
+            if (args[0].equalsIgnoreCase("help")
+                    || args[0].equalsIgnoreCase("?")) {
+
+                List<String> suggestions = new ArrayList<>();
+
+                if (sender.hasPermission("worldreset.reset"))
+                    suggestions.add("reset");
+
+                if (sender.hasPermission("worldreset.limbo.self"))
+                    suggestions.add("limbo");
+
+                if (sender.hasPermission("worldreset.death"))
+                    suggestions.add("death");
+
+                if (sender.hasPermission("worldreset.timer.use"))
+                    suggestions.add("timer");
+
+                if (sender.hasPermission("worldreset.autoreset.use"))
+                    suggestions.add("autoreset");
+
+                if (sender.hasPermission("worldreset.filter.use"))
+                    suggestions.add("filter");
+
+                if (sender.hasPermission("worldreset.seed.use"))
+                    suggestions.add("seed");
+
+                if (sender.hasPermission("worldreset.give"))
+                    suggestions.add("give");
+
+                if (sender.hasPermission("worldreset.templates"))
+                    suggestions.add("templates");
+
+                if (sender.hasPermission("worldreset.compass"))
+                    suggestions.add("compass");
+
+                if (sender.hasPermission("worldreset.scoreboard.use"))
+                    suggestions.add("scoreboard");
+
+                if (sender.hasPermission("worldreset.backup.list"))
+                    suggestions.add("backup");
+
+                if (sender.hasPermission("worldreset.language"))
+                    suggestions.add("language");
+
+                if (sender.hasPermission("worldreset.silent"))
+                    suggestions.add("silent");
+
+                if (sender.hasPermission("worldreset.config.reload"))
+                    suggestions.add("reload");
+
+                return StringUtil.copyPartialMatches(
+                        args[1],
+                        suggestions,
+                        new ArrayList<>()
+                );
+            }
+        }
+
+
+        // ARGUMENT 3
+        if (args.length == 3) {
+
+            // -------------------------
+            // GIVE
+            // -------------------------
+            if (args[0].equalsIgnoreCase("give")) {
+                if (!sender.hasPermission("worldreset.give"))
+                    return Collections.emptyList();
+
                 if (args[1].equalsIgnoreCase("boat")) {
-                    return StringUtil.copyPartialMatches(args[2], Arrays.asList("enable", "disable", "status"), new ArrayList<>());
+                    return StringUtil.copyPartialMatches(
+                            args[2],
+                            Arrays.asList("enable", "disable", "status"),
+                            new ArrayList<>()
+                    );
                 }
+
                 if (args[1].equalsIgnoreCase("wood")) {
-                    return StringUtil.copyPartialMatches(args[2], Arrays.asList("enable", "disable", "status", "0", "5", "10", "16", "32"), new ArrayList<>());
+                    return StringUtil.copyPartialMatches(
+                            args[2],
+                            Arrays.asList(
+                                    "enable",
+                                    "disable",
+                                    "status",
+                                    "0",
+                                    "5",
+                                    "10",
+                                    "16",
+                                    "32"
+                            ),
+                            new ArrayList<>()
+                    );
                 }
             }
+
+
+            // FILTER
             if (args[0].equalsIgnoreCase("filter")) {
+                if (!sender.hasPermission("worldreset.filter.config"))
+                    return Collections.emptyList();
+
                 if (args[1].equalsIgnoreCase("structure")) {
                     List<String> list = new ArrayList<>(STRUCTURE_NAMES);
                     list.add("clear");
-                    return StringUtil.copyPartialMatches(args[2], list, new ArrayList<>());
+
+                    return StringUtil.copyPartialMatches(
+                            args[2],
+                            list,
+                            new ArrayList<>()
+                    );
                 }
-                if (args[1].equalsIgnoreCase("biome") || args[1].equalsIgnoreCase("biom") || args[1].equalsIgnoreCase("bioms")) {
-                    List<String> list = new ArrayList<>(Arrays.asList("OCEANS", "FORESTS", "MOUNTAINS", "CAVES", "DESERTS", "TAIGAS", "RIVERS", "JUNGLES", "SAVANNAS", "SWAMPS", "PLAINS", "clear"));
-                    return StringUtil.copyPartialMatches(args[2], list, new ArrayList<>());
+
+                if (args[1].equalsIgnoreCase("biome")
+                        || args[1].equalsIgnoreCase("biom")
+                        || args[1].equalsIgnoreCase("bioms")) {
+
+                    List<String> list = new ArrayList<>(Arrays.asList(
+                            "OCEANS",
+                            "FORESTS",
+                            "MOUNTAINS",
+                            "CAVES",
+                            "DESERTS",
+                            "TAIGAS",
+                            "RIVERS",
+                            "JUNGLES",
+                            "SAVANNAS",
+                            "SWAMPS",
+                            "PLAINS",
+                            "clear"
+                    ));
+
+                    return StringUtil.copyPartialMatches(
+                            args[2],
+                            list,
+                            new ArrayList<>()
+                    );
                 }
+
                 if (args[1].equalsIgnoreCase("attempts")) {
-                    String current = String.valueOf(getConfig().getInt("filter.attempts", 5));
-                    return StringUtil.copyPartialMatches(args[2], Arrays.asList(current, "3", "5", "10", "15", "20"), new ArrayList<>());
+                    String current = String.valueOf(
+                            getConfig().getInt("filter.attempts", 5)
+                    );
+
+                    return StringUtil.copyPartialMatches(
+                            args[2],
+                            Arrays.asList(
+                                    current,
+                                    "3",
+                                    "5",
+                                    "10",
+                                    "15",
+                                    "20"
+                            ),
+                            new ArrayList<>()
+                    );
                 }
             }
+
+
+            // TIMER
             if (args[0].equalsIgnoreCase("timer")) {
+                if (!sender.hasPermission("worldreset.timer.config"))
+                    return Collections.emptyList();
+
                 if (args[1].equalsIgnoreCase("mode")) {
-                    List<String> list = new ArrayList<>(Arrays.asList("RTA", "IGT"));
-                    if (timerMode != null && list.contains(timerMode)) { list.remove(timerMode); list.add(0, timerMode); }
-                    return StringUtil.copyPartialMatches(args[2], list, new ArrayList<>());
+                    List<String> list = new ArrayList<>(
+                            Arrays.asList("RTA", "IGT")
+                    );
+
+                    if (timerMode != null && list.contains(timerMode)) {
+                        list.remove(timerMode);
+                        list.add(0, timerMode);
+                    }
+
+                    return StringUtil.copyPartialMatches(
+                            args[2],
+                            list,
+                            new ArrayList<>()
+                    );
                 }
+
                 if (args[1].equalsIgnoreCase("scope")) {
-                    List<String> list = new ArrayList<>(Arrays.asList("GLOBAL", "INDIVIDUAL"));
-                    if (timerScope != null && list.contains(timerScope)) { list.remove(timerScope); list.add(0, timerScope); }
-                    return StringUtil.copyPartialMatches(args[2], list, new ArrayList<>());
+                    List<String> list = new ArrayList<>(
+                            Arrays.asList("GLOBAL", "INDIVIDUAL")
+                    );
+
+                    if (timerScope != null && list.contains(timerScope)) {
+                        list.remove(timerScope);
+                        list.addFirst(timerScope);
+                    }
+
+                    return StringUtil.copyPartialMatches(
+                            args[2],
+                            list,
+                            new ArrayList<>()
+                    );
                 }
+
                 if (args[1].equalsIgnoreCase("goal")) {
-                    List<String> list = new ArrayList<>(Arrays.asList("ENTITY", "PORTAL", "ADVANCEMENT", "BLOCK", "ITEM", "NONE"));
-                    if (timerGoalType != null && list.contains(timerGoalType)) { list.remove(timerGoalType); list.add(0, timerGoalType); }
-                    return StringUtil.copyPartialMatches(args[2], list, new ArrayList<>());
+                    List<String> list = new ArrayList<>(
+                            Arrays.asList(
+                                    "ENTITY",
+                                    "PORTAL",
+                                    "ADVANCEMENT",
+                                    "BLOCK",
+                                    "ITEM",
+                                    "NONE"
+                            )
+                    );
+
+                    if (timerGoalType != null && list.contains(timerGoalType)) {
+                        list.remove(timerGoalType);
+                        list.add(0, timerGoalType);
+                    }
+
+                    return StringUtil.copyPartialMatches(
+                            args[2],
+                            list,
+                            new ArrayList<>()
+                    );
                 }
             }
+
+
+            // AUTORESET
             if (args[0].equalsIgnoreCase("autoreset")) {
-                if (args[1].equalsIgnoreCase("loop") || args[1].equalsIgnoreCase("visible")) {
-                    return StringUtil.copyPartialMatches(args[2], Arrays.asList("enable", "disable"), new ArrayList<>());
+                if (!sender.hasPermission("worldreset.autoreset.config"))
+                    return Collections.emptyList();
+
+                if (args[1].equalsIgnoreCase("loop")
+                        || args[1].equalsIgnoreCase("visible")) {
+
+                    return StringUtil.copyPartialMatches(
+                            args[2],
+                            Arrays.asList("enable", "disable"),
+                            new ArrayList<>()
+                    );
                 }
+
                 if (args[1].equalsIgnoreCase("time")) {
-                    return StringUtil.copyPartialMatches(args[2], Arrays.asList("30s", "60s", "5m", "10m", "30m", "1h", "2h"), new ArrayList<>());
+                    return StringUtil.copyPartialMatches(
+                            args[2],
+                            Arrays.asList(
+                                    "30s",
+                                    "60s",
+                                    "5m",
+                                    "10m",
+                                    "30m",
+                                    "1h",
+                                    "2h"
+                            ),
+                            new ArrayList<>()
+                    );
                 }
             }
-            if (args[0].equalsIgnoreCase("limbo") && args[1].equalsIgnoreCase("delay")) {
-                return StringUtil.copyPartialMatches(args[2], Arrays.asList("0", "3", "5", "10", "15"), new ArrayList<>());
+
+
+            // LIMBO DELAY
+            if (args[0].equalsIgnoreCase("limbo")
+                    && args[1].equalsIgnoreCase("delay")) {
+
+                if (!sender.hasPermission("worldreset.limbo.all"))
+                    return Collections.emptyList();
+
+                return StringUtil.copyPartialMatches(
+                        args[2],
+                        Arrays.asList("0", "3", "5", "10", "15"),
+                        new ArrayList<>()
+                );
             }
-            if (args[0].equalsIgnoreCase("scoreboard") && args[1].equalsIgnoreCase("reset")) {
+
+
+            // SCOREBOARD RESET
+            if (args[0].equalsIgnoreCase("scoreboard")
+                    && args[1].equalsIgnoreCase("reset")) {
+
+                if (!sender.hasPermission("worldreset.scoreboard.admin"))
+                    return Collections.emptyList();
+
                 List<String> suggestions = new ArrayList<>();
-                for (Player p : Bukkit.getOnlinePlayers()) suggestions.add(p.getName());
-                return StringUtil.copyPartialMatches(args[2], suggestions, new ArrayList<>());
+
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    suggestions.add(p.getName());
+                }
+
+                return StringUtil.copyPartialMatches(
+                        args[2],
+                        suggestions,
+                        new ArrayList<>()
+                );
             }
+
+
+            // LIMBO OTHERS
             if (args[0].equalsIgnoreCase("limbo")) {
                 try {
-                    Integer.parseInt(args[1]); // It's a delay number — suggest targets for args[2]
-                    List<String> suggestions = new ArrayList<>(Arrays.asList("me", "all"));
-                    for (Player p : Bukkit.getOnlinePlayers()) suggestions.add(p.getName());
-                    return StringUtil.copyPartialMatches(args[2], suggestions, new ArrayList<>());
-                } catch (NumberFormatException ignored) {}
+                    Integer.parseInt(args[1]);
+
+                    if (!sender.hasPermission("worldreset.limbo.others"))
+                        return Collections.emptyList();
+
+                    List<String> suggestions = new ArrayList<>(
+                            Arrays.asList("me", "all")
+                    );
+
+                    for (Player p : Bukkit.getOnlinePlayers()) {
+                        suggestions.add(p.getName());
+                    }
+
+                    return StringUtil.copyPartialMatches(
+                            args[2],
+                            suggestions,
+                            new ArrayList<>()
+                    );
+
+                } catch (NumberFormatException ignored) {
+                }
             }
-            if (args[0].equalsIgnoreCase("backup") && args[1].equalsIgnoreCase("limit")) {
-                return StringUtil.copyPartialMatches(args[2], Arrays.asList("all", "3", "5", "10", "20"), new ArrayList<>());
+
+
+            // BACKUP LIMIT
+            if (args[0].equalsIgnoreCase("backup")
+                    && args[1].equalsIgnoreCase("limit")) {
+
+                if (!sender.hasPermission("worldreset.backup.admin"))
+                    return Collections.emptyList();
+
+                return StringUtil.copyPartialMatches(
+                        args[2],
+                        Arrays.asList(
+                                "all",
+                                "3",
+                                "5",
+                                "10",
+                                "20"
+                        ),
+                        new ArrayList<>()
+                );
             }
         }
-        if (args.length == 4) {
-            if (args[0].equalsIgnoreCase("filter") && (args[1].equalsIgnoreCase("biome") || args[1].equalsIgnoreCase("biom") || args[1].equalsIgnoreCase("bioms"))) {
-                List<String> list = new ArrayList<>();
-                switch (args[2].toUpperCase()) {
-                    case "OCEANS" -> list.addAll(Arrays.asList("ocean", "deep_ocean", "cold_ocean", "deep_cold_ocean", "frozen_ocean", "deep_frozen_ocean", "lukewarm_ocean", "deep_lukewarm_ocean", "warm_ocean", "mushroom_fields"));
-                    case "FORESTS" -> list.addAll(Arrays.asList("forest", "birch_forest", "dark_forest", "old_growth_birch_forest", "old_growth_spruce_taiga", "flower_forest", "cherry_grove"));
-                    case "MOUNTAINS" -> list.addAll(Arrays.asList("stony_peaks", "jagged_peaks", "frozen_peaks", "meadow", "grove", "snowy_slopes", "windswept_hills"));
-                    case "CAVES" -> list.addAll(Arrays.asList("dripstone_caves", "lush_caves", "deep_dark"));
-                    case "DESERTS" -> list.addAll(Arrays.asList("desert", "badlands", "eroded_badlands", "wooded_badlands"));
-                    case "TAIGAS" -> list.addAll(Arrays.asList("taiga", "old_growth_pine_taiga", "old_growth_spruce_taiga", "snowy_taiga"));
-                    case "RIVERS" -> list.addAll(Arrays.asList("river", "frozen_river"));
-                    case "JUNGLES" -> list.addAll(Arrays.asList("jungle", "sparse_jungle", "bamboo_jungle"));
-                    case "SAVANNAS" -> list.addAll(Arrays.asList("savanna", "savanna_plateau", "windswept_savanna"));
-                    case "SWAMPS" -> list.addAll(Arrays.asList("swamp", "mangrove_swamp"));
-                    case "PLAINS" -> list.addAll(Arrays.asList("plains", "sunflower_plains", "snowy_plains", "ice_spikes"));
-                }
-                return StringUtil.copyPartialMatches(args[3], list, new ArrayList<>());
-            }
-            if (args[0].equalsIgnoreCase("limbo") && args[1].equalsIgnoreCase("delay")) {
-                return StringUtil.copyPartialMatches(args[3], Arrays.asList("0", "3", "5", "10", "15"), new ArrayList<>());
-            }
-            if (args[0].equalsIgnoreCase("timer") && args[1].equalsIgnoreCase("goal")) {
-                if (args[2].equalsIgnoreCase("PORTAL")) return StringUtil.copyPartialMatches(args[3], Arrays.asList("NETHER", "END", "OVERWORLD", "ANY"), new ArrayList<>());
 
+
+        // ARGUMENT 4
+        if (args.length == 4) {
+
+            // FILTER BIOME
+            if (args[0].equalsIgnoreCase("filter")
+                    && (args[1].equalsIgnoreCase("biome")
+                    || args[1].equalsIgnoreCase("biom")
+                    || args[1].equalsIgnoreCase("bioms"))) {
+
+                if (!sender.hasPermission("worldreset.filter.config"))
+                    return Collections.emptyList();
+
+                List<String> list = new ArrayList<>();
+
+                switch (args[2].toUpperCase()) {
+                    case "OCEANS" -> list.addAll(Arrays.asList(
+                            "ocean",
+                            "deep_ocean",
+                            "cold_ocean",
+                            "deep_cold_ocean",
+                            "frozen_ocean",
+                            "deep_frozen_ocean",
+                            "lukewarm_ocean",
+                            "deep_lukewarm_ocean",
+                            "warm_ocean",
+                            "mushroom_fields"
+                    ));
+
+                    case "FORESTS" -> list.addAll(Arrays.asList(
+                            "forest",
+                            "birch_forest",
+                            "dark_forest",
+                            "old_growth_birch_forest",
+                            "old_growth_spruce_taiga",
+                            "flower_forest",
+                            "cherry_grove"
+                    ));
+
+                    case "MOUNTAINS" -> list.addAll(Arrays.asList(
+                            "stony_peaks",
+                            "jagged_peaks",
+                            "frozen_peaks",
+                            "meadow",
+                            "grove",
+                            "snowy_slopes",
+                            "windswept_hills"
+                    ));
+
+                    case "CAVES" -> list.addAll(Arrays.asList(
+                            "dripstone_caves",
+                            "lush_caves",
+                            "deep_dark"
+                    ));
+
+                    case "DESERTS" -> list.addAll(Arrays.asList(
+                            "desert",
+                            "badlands",
+                            "eroded_badlands",
+                            "wooded_badlands"
+                    ));
+
+                    case "TAIGAS" -> list.addAll(Arrays.asList(
+                            "taiga",
+                            "old_growth_pine_taiga",
+                            "old_growth_spruce_taiga",
+                            "snowy_taiga"
+                    ));
+
+                    case "RIVERS" -> list.addAll(Arrays.asList(
+                            "river",
+                            "frozen_river"
+                    ));
+
+                    case "JUNGLES" -> list.addAll(Arrays.asList(
+                            "jungle",
+                            "sparse_jungle",
+                            "bamboo_jungle"
+                    ));
+
+                    case "SAVANNAS" -> list.addAll(Arrays.asList(
+                            "savanna",
+                            "savanna_plateau",
+                            "windswept_savanna"
+                    ));
+
+                    case "SWAMPS" -> list.addAll(Arrays.asList(
+                            "swamp",
+                            "mangrove_swamp"
+                    ));
+
+                    case "PLAINS" -> list.addAll(Arrays.asList(
+                            "plains",
+                            "sunflower_plains",
+                            "snowy_plains",
+                            "ice_spikes"
+                    ));
+                }
+
+                return StringUtil.copyPartialMatches(
+                        args[3],
+                        list,
+                        new ArrayList<>()
+                );
+            }
+
+
+            // LIMBO DELAY
+            if (args[0].equalsIgnoreCase("limbo")
+                    && args[1].equalsIgnoreCase("delay")) {
+
+                if (!sender.hasPermission("worldreset.limbo.all"))
+                    return Collections.emptyList();
+
+                return StringUtil.copyPartialMatches(
+                        args[3],
+                        Arrays.asList("0", "3", "5", "10", "15"),
+                        new ArrayList<>()
+                );
+            }
+
+
+            // TIMER GOAL
+            if (args[0].equalsIgnoreCase("timer")
+                    && args[1].equalsIgnoreCase("goal")) {
+
+                if (!sender.hasPermission("worldreset.timer.config"))
+                    return Collections.emptyList();
+
+                // PORTAL
+                if (args[2].equalsIgnoreCase("PORTAL")) {
+                    return StringUtil.copyPartialMatches(
+                            args[3],
+                            Arrays.asList(
+                                    "NETHER",
+                                    "END",
+                                    "OVERWORLD",
+                                    "ANY"
+                            ),
+                            new ArrayList<>()
+                    );
+                }
+
+
+                // ENTITY
                 if (args[2].equalsIgnoreCase("ENTITY")) {
                     List<String> entities = new ArrayList<>();
+
                     for (EntityType type : Registry.ENTITY_TYPE) {
-                        if (type.isAlive()) entities.add(type.key().value());
+                        if (type.isAlive()) {
+                            entities.add(type.key().value());
+                        }
                     }
-                    return StringUtil.copyPartialMatches(args[3].toLowerCase(), entities, new ArrayList<>());
+
+                    return StringUtil.copyPartialMatches(
+                            args[3].toLowerCase(),
+                            entities,
+                            new ArrayList<>()
+                    );
                 }
 
+
+                // ADVANCEMENT
                 if (args[2].equalsIgnoreCase("ADVANCEMENT")) {
                     List<String> advs = new ArrayList<>();
+
                     Iterator<Advancement> it = Bukkit.advancementIterator();
-                    while(it.hasNext()) {
+
+                    while (it.hasNext()) {
                         Advancement adv = it.next();
                         String keyValue = adv.key().value();
-                        if (!keyValue.startsWith("recipes/")) advs.add(keyValue);
+
+                        if (!keyValue.startsWith("recipes/")) {
+                            advs.add(keyValue);
+                        }
                     }
-                    return StringUtil.copyPartialMatches(args[3].toLowerCase(), advs, new ArrayList<>());
+
+                    return StringUtil.copyPartialMatches(
+                            args[3].toLowerCase(),
+                            advs,
+                            new ArrayList<>()
+                    );
                 }
 
+
+                // BLOCK
                 if (args[2].equalsIgnoreCase("BLOCK")) {
                     List<String> blocks = new ArrayList<>();
+
                     for (Material mat : Registry.MATERIAL) {
                         if (mat.isBlock()) {
                             blocks.add(mat.key().value());
                         }
                     }
-                    return StringUtil.copyPartialMatches(args[3].toLowerCase(), blocks, new ArrayList<>());
+
+                    return StringUtil.copyPartialMatches(
+                            args[3].toLowerCase(),
+                            blocks,
+                            new ArrayList<>()
+                    );
                 }
 
+
+                // ITEM
                 if (args[2].equalsIgnoreCase("ITEM")) {
                     List<String> items = new ArrayList<>();
+
                     for (Material mat : Registry.MATERIAL) {
                         if (mat.isItem()) {
                             items.add(mat.key().value());
                         }
                     }
-                    return StringUtil.copyPartialMatches(args[3].toLowerCase(), items, new ArrayList<>());
+
+                    return StringUtil.copyPartialMatches(
+                            args[3].toLowerCase(),
+                            items,
+                            new ArrayList<>()
+                    );
                 }
             }
         }
+
+
+        // Nothing to suggest
         return Collections.emptyList();
     }
 
