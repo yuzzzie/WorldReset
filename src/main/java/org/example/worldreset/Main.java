@@ -5474,28 +5474,36 @@ public class Main extends JavaPlugin implements Listener {
         sender.sendMessage("§8§m------§8[ §b§lWorldReset §8]§m------");
         sender.sendMessage(getMsg("use_wr_help_command"));
         sender.sendMessage("");
-        sender.sendMessage(getMsg("game"));
-        sender.sendMessage(getMsg("wr_reset_seconds_reset"));
-        sender.sendMessage(getMsg("wr_limbo_playerme_toggle"));
-        sender.sendMessage(getMsg("wr_death_toggle_resetondeath"));
-        sender.sendMessage("");
-        sender.sendMessage(getMsg("timer_autoreset"));
-        sender.sendMessage(getMsg("wr_timer_action_speedrun"));
-        sender.sendMessage(getMsg("wr_autoreset_action_scheduled"));
-        sender.sendMessage("");
-        sender.sendMessage(getMsg("world"));
-        sender.sendMessage(getMsg("wr_filter_type_name"));
-        sender.sendMessage(getMsg("wr_seed_value_fixedrandom"));
-        sender.sendMessage(getMsg("wr_templates_action_world"));
-        sender.sendMessage(getMsg("wr_compass_enabledisable_locator"));
-        sender.sendMessage(getMsg("wr_give_boatwood_auto"));
-        sender.sendMessage(getMsg("wr_scoreboard"));
-        sender.sendMessage("");
-        sender.sendMessage(getMsg("system"));
-        sender.sendMessage(getMsg("wr_backup_action_backup"));
-        sender.sendMessage(getMsg("wr_language_enpl_change"));
-        sender.sendMessage(getMsg("wr_silent_toggle_broadcasts"));
-        sender.sendMessage(getMsg("wr_reload_reload_config"));
+        if (sender.hasPermission("worldreset.reset") || sender.hasPermission("worldreset.limbo.self") || sender.hasPermission("worldreset.limbo.others") || sender.hasPermission("worldreset.death")) {
+            sender.sendMessage(getMsg("game"));
+            if (sender.hasPermission("worldreset.reset")) sender.sendMessage(getMsg("wr_reset_seconds_reset"));
+            if (sender.hasPermission("worldreset.limbo.self") || sender.hasPermission("worldreset.limbo.others")) sender.sendMessage(getMsg("wr_limbo_playerme_toggle"));
+            if (sender.hasPermission("worldreset.death")) sender.sendMessage(getMsg("wr_death_toggle_resetondeath"));
+            sender.sendMessage("");
+        }
+        if (sender.hasPermission("worldreset.timer.use") || sender.hasPermission("worldreset.timer.config") || sender.hasPermission("worldreset.autoreset.use") || sender.hasPermission("worldreset.autoreset.config")) {
+            sender.sendMessage(getMsg("timer_autoreset"));
+            if (sender.hasPermission("worldreset.timer.use") || sender.hasPermission("worldreset.timer.config")) sender.sendMessage(getMsg("wr_timer_action_speedrun"));
+            if (sender.hasPermission("worldreset.autoreset.use") || sender.hasPermission("worldreset.autoreset.config")) sender.sendMessage(getMsg("wr_autoreset_action_scheduled"));
+            sender.sendMessage("");
+        }
+        if (sender.hasPermission("worldreset.filter.use") || sender.hasPermission("worldreset.filter.config") || sender.hasPermission("worldreset.seed.use") || sender.hasPermission("worldreset.seed.config") || sender.hasPermission("worldreset.templates") || sender.hasPermission("worldreset.compass") || sender.hasPermission("worldreset.give") || sender.hasPermission("worldreset.scoreboard.use")) {
+            sender.sendMessage(getMsg("world"));
+            if (sender.hasPermission("worldreset.filter.use") || sender.hasPermission("worldreset.filter.config")) sender.sendMessage(getMsg("wr_filter_type_name"));
+            if (sender.hasPermission("worldreset.seed.use") || sender.hasPermission("worldreset.seed.config")) sender.sendMessage(getMsg("wr_seed_value_fixedrandom"));
+            if (sender.hasPermission("worldreset.templates")) sender.sendMessage(getMsg("wr_templates_action_world"));
+            if (sender.hasPermission("worldreset.compass")) sender.sendMessage(getMsg("wr_compass_enabledisable_locator"));
+            if (sender.hasPermission("worldreset.give")) sender.sendMessage(getMsg("wr_give_boatwood_auto"));
+            if (sender.hasPermission("worldreset.scoreboard.use")) sender.sendMessage(getMsg("wr_scoreboard"));
+            sender.sendMessage("");
+        }
+        if (sender.hasPermission("worldreset.backup.list") || sender.hasPermission("worldreset.backup.create") || sender.hasPermission("worldreset.backup.admin") || sender.hasPermission("worldreset.language") || sender.hasPermission("worldreset.silent") || sender.hasPermission("worldreset.config.reload")) {
+            sender.sendMessage(getMsg("system"));
+            if (sender.hasPermission("worldreset.backup.list") || sender.hasPermission("worldreset.backup.create") || sender.hasPermission("worldreset.backup.admin")) sender.sendMessage(getMsg("wr_backup_action_backup"));
+            if (sender.hasPermission("worldreset.language")) sender.sendMessage(getMsg("wr_language_enpl_change"));
+            if (sender.hasPermission("worldreset.silent")) sender.sendMessage(getMsg("wr_silent_toggle_broadcasts"));
+            if (sender.hasPermission("worldreset.config.reload")) sender.sendMessage(getMsg("wr_reload_reload_config"));
+        }
         sender.sendMessage("§8§m----------------------------");
     }
 
