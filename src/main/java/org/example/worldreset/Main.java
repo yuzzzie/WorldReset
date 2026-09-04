@@ -3881,9 +3881,9 @@ public class Main extends JavaPlugin implements Listener {
         }
 
 
-        if (isGameReady && !isResetting) {
+        if (isGameReady && !isResetting && !p.getWorld().getName().equals(limboWorldName)) {
             String wName = p.getWorld().getName();
-            boolean shouldTeleport = !p.hasPlayedBefore() || wName.equals("world") || wName.equals(limboWorldName);
+            boolean shouldTeleport = !p.hasPlayedBefore() || wName.equals("world");
             if (shouldTeleport) {
                 World game = Bukkit.getWorld(gameWorldName);
                 if (game != null) {
